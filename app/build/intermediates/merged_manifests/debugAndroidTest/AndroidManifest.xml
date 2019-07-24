@@ -3,7 +3,7 @@
     package="com.d.httprequest.test" >
 
     <uses-sdk
-        android:minSdkVersion="16"
+        android:minSdkVersion="19"
         android:targetSdkVersion="28" />
 
     <instrumentation

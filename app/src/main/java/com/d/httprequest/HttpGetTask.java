@@ -1,14 +1,11 @@
 package com.d.httprequest;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.d.httprequest.model.Post;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +22,11 @@ import java.util.Scanner;
 
 public class HttpGetTask extends AsyncTask<String, Long, String> {
 
+    IDone iDone;
 
+    public HttpGetTask(IDone iDone){
+        this.iDone = iDone;
+    }
     @Override
     protected String doInBackground(String... strings) {
 
@@ -47,26 +48,26 @@ public class HttpGetTask extends AsyncTask<String, Long, String> {
         }
         return null;
     }
+
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         Gson gson = new Gson();
 
 
-
         List<Post> postList = new ArrayList<>();
         try {
             JSONArray root = new JSONArray(s);
 
-            for (int i=0; i<root.length();i++){
+            for (int i = 0; i < root.length(); i++) {
                 JSONObject post = root.getJSONObject(i);
                 int id = post.getInt("id");
                 Log.e("id", String.valueOf(id));
                 String date = post.getString("date");
-                Log.e("date",date);
+                Log.e("date", date);
                 JSONObject title = post.getJSONObject("title");
                 String redered = title.getString("rendered");
-                Log.e("readered",redered);
+                Log.e("readered", redered);
 
                 Post postModel = new Post();
                 postModel.id = id;
@@ -74,30 +75,13 @@ public class HttpGetTask extends AsyncTask<String, Long, String> {
                 postModel.date = date;
 
                 postList.add(postModel);
-
+                iDone.done(postList);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        JsonParser jsonParser = new JsonParser();
-//        JsonArray root = jsonParser.parse(s).getAsJsonArray();
-//        for (int i=0;i<root.size();i++){
-//            JsonObject post = root.get(i).getAsJsonObject();
-//            int id = post.get("id").getAsInt();
-//            String date = post.get("date").getAsString();
-//            JsonObject title = post.get("title").getAsJsonObject();
-//            String rendered = title.get("rendered").getAsString();
-//            Post postModel = new Post();
-//            postModel.id = id;
-//            postModel.title = rendered;
-//            postModel.date = date;
-//
-//            postList.add(postModel);
-        }
 
-
-
-
+    }
 
 //            JSONArray root = new JSONArray(s);
 //            List<Post> postList = new ArrayList<>();
@@ -146,5 +130,8 @@ public class HttpGetTask extends AsyncTask<String, Long, String> {
 //        Log.e("GSON SIZE", postListGson.size() + "");
 //
 
+    public interface IDone{
+        void done(List<Post> a);
+    }
 
 }
